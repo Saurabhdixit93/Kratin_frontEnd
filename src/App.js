@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { getTokenCookie } from "./context/cookie";
+import axios from "axios";
 
+import LoginForm from "./Pages/Login";
+import SignupForm from "./Pages/Signup";
+import Navbar from "./components/navbar";
+import Footer from "./components/footer";
+import HomePage from "./Pages/HomePage";
+import TaskForm from "./components/Task/TaskForm";
+import TaskList from "./components/Task/TaskList";
+
+axios.defaults.baseURL = process.env.REACT_APP_BACK_URL;
 function App() {
+  const user = getTokenCookie();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route index path="/" element={user ? <HomePage /> : <SignupForm />} />
+        <Route path="/signup" element={user ? <HomePage /> : <SignupForm />} />
+        <Route path="/login" element={user ? <HomePage /> : <LoginForm />} />
+        <Route
+          path="/create-task"
+          element={user ? <TaskForm /> : <LoginForm />}
+        />
+        <Route
+          path="/task-list"
+          element={user ? <TaskList /> : <LoginForm />}
+        />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
   );
 }
 
